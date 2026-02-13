@@ -8,9 +8,10 @@
 using namespace std;
 
 struct student{
-
-    //[Missing Code 1] Define struct student with four members (name ,id , gender, gpa);
-    
+	string name;
+    int id;
+    char gender;
+    float gpa;
 };
 
 struct course{
@@ -33,19 +34,23 @@ student text2student(string text){
         else if(count == 3) gpa += text[i];
     }
     
-    //[Missing Code 2] Fill in the blank with the correct code.;
     s.name = name;
-    s.id = _____________;
-    s.gender = _____________;
-    s.gpa = _____________;
+    s.id = atoi(id.c_str());
+    s.gender = gen[0];
+    s.gpa = atof(gpa.c_str());
     
-    _____________;
+    return s;
 }
 
 
 student * findstudent(vector<student> allstudents,int key){ //[Missing Code 4] There is something wrong in this line.
 	for(unsigned int i = 0; i < allstudents.size(); i++){
-		if(allstudents[i].id  == key) return &allstudents[i];
+		student *sd;
+		sd = new student;
+		if(allstudents[i].id  == key){
+			*sd = allstudents[i];
+			return sd;
+		} 
 	}
 	return 0;
 }
@@ -86,7 +91,7 @@ int main(){
 	
 	while(getline(student_file,textline)){
         student s =  text2student(textline); 
-		allstudents.push_back(s); 		
+		allstudents.push_back(s);		
 	}
 	
 	int state = 1;
@@ -98,26 +103,32 @@ int main(){
 			c.id = atof(textline.substr(loc+1,5).c_str());
 			getline(course_file,textline);
 			allcourses.push_back(c);
-			state = 2;			
+			state = 2;
 		}else if(state == 2){
 			if(textline == "> Students"){
 				state = 3;
 			}else{
-			
-			    //[Missing Code 3] Append (push_back) textline to lecture_list[] of the recently added course in allcourses[];
-			    
+				for(long unsigned int i = 0;i<allcourses.size();i++){
+					if(allcourses.size() > 1) i = allcourses.size() - 1 ;
+					allcourses[i].lecture_list.push_back(textline);
+				}
 			}			
 		}else{
 			if(textline == "---------------------------------------"){
 				state = 1;
 			}else{
 				student *p = findstudent(allstudents,atof(textline.c_str()));
-				
-				//[Missing Code 5] Append (push_back) p to student_list of the recently added course in allcourses[];
-				
+				for(long unsigned int i = 0;i<allcourses.size();i++){
+					if(allcourses.size() > 1) i = allcourses.size() - 1 ;
+					allcourses[i].student_list.push_back(p);
+				}
 			}
 		}
 	}
 	printreport(allcourses);
-	
+	for(unsigned int i = 0; i<allcourses.size();i++){
+		for(unsigned int j = 0; j < allcourses[i].student_list.size();j++){
+			delete allcourses[i].student_list[j];
+		}
+	}
 }
